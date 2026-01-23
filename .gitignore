@@ -1,0 +1,6 @@
+*build*/
+tests/build*
+build_codestyle*
+build_sanalyze*
+build_danalyze*
+!build.sh
