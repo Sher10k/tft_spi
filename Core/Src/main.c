@@ -467,7 +467,8 @@ int main(void)
   char line_6[15];
   char line_7[15];
   
-  BSP_LCD_SetFont(&Font20);
+  BSP_LCD_SetFont(&Font12);
+  BSP_LCD_Clear(LCD_COLOR_BLACK);
 
   // snprintf(line_0, sizeof(line_0), "MPU6050 TEST");
   // BSP_LCD_DisplayStringAt(0, 0, (uint8_t *)line_0, LEFT_MODE);

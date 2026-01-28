@@ -54,7 +54,7 @@ Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash_ex.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_exti.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2c.c \
 Core/Src/system_stm32f1xx.c \
-Core/Src/Lcd/ili9341.c \
+Core/Src/Lcd/st7735.c \
 Core/Src/Lcd/lcd_io_spi.c \
 Core/Src/Lcd/stm32_adafruit_lcd.c \
 Core/Src/Lcd/Fonts/font8.c \
