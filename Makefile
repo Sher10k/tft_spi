@@ -62,6 +62,7 @@ Core/Src/Lcd/Fonts/font12.c \
 Core/Src/Lcd/Fonts/font16.c \
 Core/Src/Lcd/Fonts/font20.c \
 Core/Src/Lcd/Fonts/font24.c \
+Core/Src/BMP180/BMP180.c \
 Core/Src/stm32f1xx_hal_timebase_tim.c
 
 # ASM sources
@@ -123,8 +124,9 @@ AS_INCLUDES =
 # C includes
 C_INCLUDES =  \
 -ICore/Inc \
--ICore/Src/Lcd \
--ICore/Src/Lcd/Fonts \
+-ICore/Inc/Lcd \
+-ICore/Inc/Lcd/Fonts \
+-ICore/Inc/BMP180 \
 -IDrivers/STM32F1xx_HAL_Driver/Inc \
 -IDrivers/STM32F1xx_HAL_Driver/Inc/Legacy \
 -IDrivers/CMSIS/Device/ST/STM32F1xx/Include \

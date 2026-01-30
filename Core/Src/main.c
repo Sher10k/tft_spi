@@ -32,6 +32,9 @@
 /* BSP_LCD_... */
 #include "stm32_adafruit_lcd.h"
 
+/* BMP180 */
+#include "BMP180.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -66,6 +69,15 @@
 #if LCD_REVERSE16 == 1
 #define RD(a)                 __REVSH(a)
 #endif
+
+/* BMP180 */
+float Temperature = 0;
+float Pressure = 0;
+float Altitude = 0;
+
+char Temperature1[10];
+char Pressure1[10];
+char Altitude1[10];
 
 /* USER CODE END PD */
 
@@ -404,7 +416,7 @@ void force_temp_conv (void)
 }
 
 float TEMP;
-char buffer[15];
+// char buffer[15];
 
 /* USER CODE END 0 */
 
@@ -441,6 +453,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   MPU6050_Init();
+  BMP180_Start();
 
   /* USER CODE END 2 */
 
@@ -466,6 +479,9 @@ int main(void)
   char line_5[15];
   char line_6[15];
   char line_7[15];
+  char line_8[15];
+  char line_9[15];
+  char line_10[15];
   
   BSP_LCD_SetFont(&Font20);
 
@@ -487,32 +503,32 @@ int main(void)
 
     {
       // read the Accelerometer and Gyro values
-      MPU6050_Read_Accel();
-      MPU6050_Read_Gyro();
+      // MPU6050_Read_Accel();
+      // MPU6050_Read_Gyro();
 
-      if (Ay > 0) {
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
-      }
-      else {
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
-      }
+      // if (Ay > 0) {
+      //   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
+      // }
+      // else {
+      //   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
+      // }
 
       Get_Time();
       sprintf (line_0, "%d-%d-20%d %02d:%02d:%02d ", time.dayofmonth, time.month, time.year, time.hour, time.minutes, time.seconds);
       BSP_LCD_DisplayStringAtLine(0, (uint8_t *)line_0);
 
-      snprintf(line_1, sizeof(line_1), "Ax=%.3fg       ", Ax);
-      BSP_LCD_DisplayStringAtLine(1, (uint8_t *)line_1);
-      snprintf(line_2, sizeof(line_2), "Ay=%.3fg       ", Ay);
-      BSP_LCD_DisplayStringAtLine(2, (uint8_t *)line_2);
-      snprintf(line_3, sizeof(line_3), "Az=%.3fg       ", Az);
-      BSP_LCD_DisplayStringAtLine(3, (uint8_t *)line_3);
-      snprintf(line_4, sizeof(line_4), "Gx=%.3fg       ", Gx);
-      BSP_LCD_DisplayStringAtLine(4, (uint8_t *)line_4);
-      snprintf(line_5, sizeof(line_5), "Gy=%.3fg       ", Gy);
-      BSP_LCD_DisplayStringAtLine(5, (uint8_t *)line_5);
-      snprintf(line_6, sizeof(line_6), "Gz=%.3fg       ", Gz);
-      BSP_LCD_DisplayStringAtLine(6, (uint8_t *)line_6);
+      // snprintf(line_1, sizeof(line_1), "Ax=%.3fg       ", Ax);
+      // BSP_LCD_DisplayStringAtLine(1, (uint8_t *)line_1);
+      // snprintf(line_2, sizeof(line_2), "Ay=%.3fg       ", Ay);
+      // BSP_LCD_DisplayStringAtLine(2, (uint8_t *)line_2);
+      // snprintf(line_3, sizeof(line_3), "Az=%.3fg       ", Az);
+      // BSP_LCD_DisplayStringAtLine(3, (uint8_t *)line_3);
+      // snprintf(line_4, sizeof(line_4), "Gx=%.3fg       ", Gx);
+      // BSP_LCD_DisplayStringAtLine(4, (uint8_t *)line_4);
+      // snprintf(line_5, sizeof(line_5), "Gy=%.3fg       ", Gy);
+      // BSP_LCD_DisplayStringAtLine(5, (uint8_t *)line_5);
+      // snprintf(line_6, sizeof(line_6), "Gz=%.3fg       ", Gz);
+      // BSP_LCD_DisplayStringAtLine(6, (uint8_t *)line_6);
 
       // c = random() % 96 + ' ';
       // snprintf(line_7, sizeof(line_7), "random: %c", c);
@@ -526,10 +542,23 @@ int main(void)
 
       force_temp_conv();
       TEMP = Get_Temp();
-      sprintf (buffer, "Temp: %.2fC", TEMP);
-      BSP_LCD_DisplayStringAtLine(8, (uint8_t *)buffer);
+      sprintf (line_7, "Temp: %.2fC", TEMP);
+      BSP_LCD_DisplayStringAtLine(7, (uint8_t *)line_7);
 
-      HAL_Delay (50);  // wait for a while
+      /* BMP180 */
+      Temperature = BMP180_GetTemp();
+      Pressure = BMP180_GetPressMmhg(3);
+      Altitude = BMP180_GetAlt(3);
+
+      sprintf (line_8, "Temperature: %.2fC", Temperature);
+      BSP_LCD_DisplayStringAtLine(8, (uint8_t *)line_8);
+      sprintf (line_9, "Pressure: %.2fmmHg", Pressure);
+      BSP_LCD_DisplayStringAtLine(9, (uint8_t *)line_9);
+      sprintf (line_10, "Altitude: %.2fm", Altitude);
+      BSP_LCD_DisplayStringAtLine(10, (uint8_t *)line_10);
+
+
+      HAL_Delay (100);  // wait for a while
 
       continue;
     }
