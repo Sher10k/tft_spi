@@ -32,6 +32,9 @@
 /* BSP_LCD_... */
 #include "stm32_adafruit_lcd.h"
 
+/* ENS160 */
+#include "ENS160.h"
+
 /* AHT21 */
 #include "AHT21.h"
 
@@ -72,6 +75,9 @@
 #if LCD_REVERSE16 == 1
 #define RD(a)                 __REVSH(a)
 #endif
+
+/* ENS160 */
+SensorData ENS160_data;
 
 /* AHT21 */
 int32_t AHT21_temp = 0;
@@ -460,8 +466,11 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   MPU6050_Init();
-  BMP180_Start();
+  ENS160_SetOpMode(RESET_MODE);
+  Delay(100);
+  ENS160_SetOpMode(STANDARD_MODE);
   AHT21_init();
+  BMP180_Start();
 
   /* USER CODE END 2 */
 
@@ -547,6 +556,15 @@ int main(void)
       // BSP_LCD_DisplayStringAtLine(8, (uint8_t *)buffer);
       // sprintf (buffer, "Date: %d-%d-20%d", time.dayofmonth, time.month, time.year);
       // BSP_LCD_DisplayStringAtLine(9, (uint8_t *)buffer);
+
+      /* ENS160 */
+      ENS160_Read_Datas(&ENS160_data);
+      sprintf (line_2, "AQI: %d", ENS160_data.AQI_data);
+      BSP_LCD_DisplayStringAtLine(2, (uint8_t *)line_2);
+      sprintf (line_3, "TVOC: %dppb", ENS160_data.TVOC_data);
+      BSP_LCD_DisplayStringAtLine(3, (uint8_t *)line_3);
+      sprintf (line_4, "ECO2: %dppm", ENS160_data.ECO2_data);
+      BSP_LCD_DisplayStringAtLine(4, (uint8_t *)line_4);
 
       /* AHT21 */
       AHT21_humidity = AHT21_Read_Humidity();

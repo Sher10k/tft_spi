@@ -13,6 +13,8 @@
   This software library is shared with public for educational purposes, without WARRANTY and Author is not liable for any damages caused directly
   or indirectly by this software, read more about this on the GNU General Public License.
 
+  Source code: https://controllerstech.com/interface-bmp180-with-stm32/
+
   ******************************************************************************
 */
 
