@@ -24,7 +24,7 @@
 extern I2C_HandleTypeDef hi2c1;
 #define BMP180_I2C &hi2c1
 
-#define BMP180_ADDRESS 0xEE
+#define BMP180_ADDRESS 0xEE // = (0x77 << 1)
 
 
 // Defines according to the datsheet

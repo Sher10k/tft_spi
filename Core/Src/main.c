@@ -32,6 +32,9 @@
 /* BSP_LCD_... */
 #include "stm32_adafruit_lcd.h"
 
+/* AHT21 */
+#include "AHT21.h"
+
 /* BMP180 */
 #include "BMP180.h"
 
@@ -70,8 +73,12 @@
 #define RD(a)                 __REVSH(a)
 #endif
 
+/* AHT21 */
+int32_t AHT21_temp = 0;
+uint32_t AHT21_humidity = 0;
+
 /* BMP180 */
-float Temperature = 0;
+float BMP180_temp = 0;
 float Pressure = 0;
 float Altitude = 0;
 
@@ -246,7 +253,7 @@ uint32_t FillCircleTest(uint32_t n)
 
 //-----------------------------------------------------------------------------
 
-#define MPU6050_ADDR 0xD0
+#define MPU6050_ADDR 0xD0 // = (0x68 << 1)
 
 #define SMPLRT_DIV_REG 0x19
 #define GYRO_CONFIG_REG 0x1B
@@ -340,7 +347,7 @@ void MPU6050_Read_Gyro (void)
 
 //-----------------------------------------------------------------------------
 
-#define DS3231_ADDRESS 0xD0
+#define DS3231_ADDRESS 0xD0 // = (0x68 << 1)
 
 // Convert normal decimal numbers to binary coded decimal
 uint8_t decToBcd(int val)
@@ -454,6 +461,7 @@ int main(void)
 
   MPU6050_Init();
   BMP180_Start();
+  AHT21_init();
 
   /* USER CODE END 2 */
 
@@ -540,17 +548,26 @@ int main(void)
       // sprintf (buffer, "Date: %d-%d-20%d", time.dayofmonth, time.month, time.year);
       // BSP_LCD_DisplayStringAtLine(9, (uint8_t *)buffer);
 
+      /* AHT21 */
+      AHT21_humidity = AHT21_Read_Humidity();
+      sprintf (line_5, "Humidity: %d%%", AHT21_humidity);
+      BSP_LCD_DisplayStringAtLine(5, (uint8_t *)line_5);
+      AHT21_temp = AHT21_Read_Temperature();
+      sprintf (line_6, "Temp: %dC", AHT21_temp);
+      BSP_LCD_DisplayStringAtLine(6, (uint8_t *)line_6);
+
+      /* DS3231 */
       force_temp_conv();
       TEMP = Get_Temp();
       sprintf (line_7, "Temp: %.2fC", TEMP);
       BSP_LCD_DisplayStringAtLine(7, (uint8_t *)line_7);
 
       /* BMP180 */
-      Temperature = BMP180_GetTemp();
+      BMP180_temp = BMP180_GetTemp();
       Pressure = BMP180_GetPressMmhg(3);
       Altitude = BMP180_GetAlt(3);
 
-      sprintf (line_8, "Temperature: %.2fC", Temperature);
+      sprintf (line_8, "Temperature: %.2fC", BMP180_temp);
       BSP_LCD_DisplayStringAtLine(8, (uint8_t *)line_8);
       sprintf (line_9, "Pressure: %.2fmmHg", Pressure);
       BSP_LCD_DisplayStringAtLine(9, (uint8_t *)line_9);
