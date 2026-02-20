@@ -54,10 +54,10 @@ HAL_StatusTypeDef AHT21_init(void) {
   return ret;
 }
 
-uint32_t AHT21_Read_Humidity(void) {
+float AHT21_Read_Humidity(void) {
   HAL_StatusTypeDef ret;
   uint8_t buff[8];
-  uint32_t humidity;
+  long humidity;
 
   buff[0] = 0xAC;
   buff[1] = 0X33;
@@ -72,15 +72,13 @@ uint32_t AHT21_Read_Humidity(void) {
       i2c_RETRY_TIME);
   //CALCULATING HUMIDITY
   humidity = (buff[1] << 12) | (buff[2] << 4) | (buff[3] >> 4);
-  humidity = (humidity * 100);
-  humidity = humidity / 0x100000;
-  return humidity;
+  return ((float)(humidity) / 0x100000 * 100.0f); // 0x100000 = 1048576.0f
 }
 
-int32_t AHT21_Read_Temperature(void) {
+float AHT21_Read_Temperature(void) {
   HAL_StatusTypeDef ret;
   uint8_t buff[8];
-  uint32_t temperature;
+  long temperature;
 
   buff[0] = 0xAC;
   buff[1] = 0X33;
@@ -95,8 +93,5 @@ int32_t AHT21_Read_Temperature(void) {
       i2c_RETRY_TIME);
   //CALCULATING TEMPERATURE
   temperature = ((buff[3] & 0xF) << 16) | (buff[4] << 8) | (buff[5]);
-  temperature = (temperature * 200);
-  temperature = temperature / 0x100000;
-  temperature = temperature - 50;
-  return temperature;
+  return ((float)(temperature) / 0x100000 * 200 - 50);  // 0x100000 = 1048576.0f
 }

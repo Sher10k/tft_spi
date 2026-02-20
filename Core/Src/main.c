@@ -80,8 +80,8 @@
 SensorData ENS160_data;
 
 /* AHT21 */
-int32_t AHT21_temp = 0;
-uint32_t AHT21_humidity = 0;
+float AHT21_temp = 0;
+float AHT21_humidity = 0;
 
 /* BMP180 */
 float BMP180_temp = 0;
@@ -488,17 +488,18 @@ int main(void)
   Delay(100);
   printf("Display ID = %X\r\n", (unsigned int)BSP_LCD_ReadID());
 
-  char line_0[15];
-  char line_1[15];
-  char line_2[15];
-  char line_3[15];
-  char line_4[15];
-  char line_5[15];
-  char line_6[15];
-  char line_7[15];
-  char line_8[15];
-  char line_9[15];
-  char line_10[15];
+  uint8_t line_size = 22;
+  char line_0[line_size];
+  char line_1[line_size];
+  char line_2[line_size];
+  char line_3[line_size];
+  char line_4[line_size];
+  char line_5[line_size];
+  char line_6[line_size];
+  char line_7[line_size];
+  char line_8[line_size];
+  char line_9[line_size];
+  char line_10[line_size];
   
   BSP_LCD_SetFont(&Font20);
 
@@ -523,15 +524,8 @@ int main(void)
       // MPU6050_Read_Accel();
       // MPU6050_Read_Gyro();
 
-      // if (Ay > 0) {
-      //   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
-      // }
-      // else {
-      //   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
-      // }
-
       Get_Time();
-      sprintf (line_0, "%d-%d-20%d %02d:%02d:%02d ", time.dayofmonth, time.month, time.year, time.hour, time.minutes, time.seconds);
+      sprintf (line_0, "%d-%d-20%d %02d:%02d:%02d   ", time.dayofmonth, time.month, time.year, time.hour, time.minutes, time.seconds);
       BSP_LCD_DisplayStringAtLine(0, (uint8_t *)line_0);
 
       // snprintf(line_1, sizeof(line_1), "Ax=%.3fg       ", Ax);
@@ -559,25 +553,32 @@ int main(void)
 
       /* ENS160 */
       ENS160_Read_Datas(&ENS160_data);
-      sprintf (line_2, "AQI: %d", ENS160_data.AQI_data);
+      sprintf (line_2, "AQI: %d     ", ENS160_data.AQI_data);
       BSP_LCD_DisplayStringAtLine(2, (uint8_t *)line_2);
-      sprintf (line_3, "TVOC: %dppb", ENS160_data.TVOC_data);
+      sprintf (line_3, "TVOC: %dppb     ", ENS160_data.TVOC_data);
       BSP_LCD_DisplayStringAtLine(3, (uint8_t *)line_3);
-      sprintf (line_4, "ECO2: %dppm", ENS160_data.ECO2_data);
+      sprintf (line_4, "ECO2: %dppm     ", ENS160_data.ECO2_data);
       BSP_LCD_DisplayStringAtLine(4, (uint8_t *)line_4);
+
+      if (ENS160_data.AQI_data > 1) {
+        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
+      }
+      else {
+        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
+      }
 
       /* AHT21 */
       AHT21_humidity = AHT21_Read_Humidity();
-      sprintf (line_5, "Humidity: %d%%", AHT21_humidity);
+      sprintf (line_5, "Humidity: %.2f%%     ", AHT21_humidity);
       BSP_LCD_DisplayStringAtLine(5, (uint8_t *)line_5);
       AHT21_temp = AHT21_Read_Temperature();
-      sprintf (line_6, "Temp: %dC", AHT21_temp);
+      sprintf (line_6, "AHT21  Temp: %.2fC     ", AHT21_temp);
       BSP_LCD_DisplayStringAtLine(6, (uint8_t *)line_6);
 
       /* DS3231 */
       force_temp_conv();
       TEMP = Get_Temp();
-      sprintf (line_7, "Temp: %.2fC", TEMP);
+      sprintf (line_7, "DS3231 Temp: %.2fC     ", TEMP);
       BSP_LCD_DisplayStringAtLine(7, (uint8_t *)line_7);
 
       /* BMP180 */
@@ -585,11 +586,11 @@ int main(void)
       Pressure = BMP180_GetPressMmhg(3);
       Altitude = BMP180_GetAlt(3);
 
-      sprintf (line_8, "Temperature: %.2fC", BMP180_temp);
+      sprintf (line_8, "BMP180 Temp: %.2fC     ", BMP180_temp);
       BSP_LCD_DisplayStringAtLine(8, (uint8_t *)line_8);
-      sprintf (line_9, "Pressure: %.2fmmHg", Pressure);
+      sprintf (line_9, "Pressure: %.2fmmHg     ", Pressure);
       BSP_LCD_DisplayStringAtLine(9, (uint8_t *)line_9);
-      sprintf (line_10, "Altitude: %.2fm", Altitude);
+      sprintf (line_10, "Altitude: %.2fm     ", Altitude);
       BSP_LCD_DisplayStringAtLine(10, (uint8_t *)line_10);
 
 

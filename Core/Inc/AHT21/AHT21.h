@@ -26,8 +26,8 @@
 
 HAL_StatusTypeDef AHT21_init(void);
 
-uint32_t AHT21_Read_Humidity(void);
+float AHT21_Read_Humidity(void);
 
-int32_t AHT21_Read_Temperature(void);
+float AHT21_Read_Temperature(void);
 
 #endif /* INC_ANT21_H_ */
